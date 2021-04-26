@@ -1,13 +1,12 @@
 import deepEqual from 'fast-deep-equal';
-import {ComponentType, ReactElement} from 'react';
-import {ObjectOfAny} from '../../types';
-import {isObject} from '../../utils/objects';
+import { ComponentType, ReactElement } from 'react';
+import { isObject } from '../object';
 import stepThroughComponents from '../stepThroughComponents';
 
 function findMatchingComponents<TProps>(
   tree: ReactElement,
   componentType: ComponentType<TProps>,
-  expectedProps?: ObjectOfAny
+  expectedProps?: { [key: string]: any }
 ): ReactElement[] {
   const matchingElements: ReactElement[] = [];
 

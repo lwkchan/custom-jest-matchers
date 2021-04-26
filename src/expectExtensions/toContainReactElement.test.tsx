@@ -1,15 +1,16 @@
 import React from 'react';
 import shallow from '../shallow';
-import BaseModal from '../../components/BaseModal/BaseModal';
-import FormLayoutSidebar from '../../components/Layout/FormLayout/Sidebar/Sidebar';
-import ProductCard from '../../components/ProductCard/ProductCard';
-import RenderOnLocales from '../../RenderOnLocales';
-import {Locale} from '../../RootProvider/LocaleContext';
-import {Product} from '../../types';
+
+function CustomElement({}: any) {
+  return <div>Custom element</div>;
+}
 
 describe('toContainReactElement', () => {
   it('finds React elements with correct props', () => {
-    expect(<button type="button">Test</button>).toContainReactElement('button', {type: 'button'});
+    expect(<button type="button">Test</button>).toContainReactElement(
+      'button',
+      { type: 'button' }
+    );
   });
   it('finds React elements when no props are given', () => {
     expect(<button type="button">Test</button>).toContainReactElement('button');
@@ -19,14 +20,21 @@ describe('toContainReactElement', () => {
       <button type="button" onClick={jest.fn()}>
         Test
       </button>
-    ).toContainReactElement('button', {type: 'button', onClick: expect.any(Function)});
+    ).toContainReactElement('button', {
+      type: 'button',
+      onClick: expect.any(Function),
+    });
 
-    expect(<input type="text" name="favouriteDisneyFilm" />).toContainReactElement('input', {
+    expect(
+      <input type="text" name="favouriteDisneyFilm" />
+    ).toContainReactElement('input', {
       type: 'text',
       name: expect.stringMatching(/^favourite/),
     });
 
-    expect(<input type="text" name="favouriteDisneyFilm" />).toContainReactElement(
+    expect(
+      <input type="text" name="favouriteDisneyFilm" />
+    ).toContainReactElement(
       'input',
       expect.objectContaining({
         type: 'text',
@@ -35,8 +43,14 @@ describe('toContainReactElement', () => {
 
     const matchingAdvantage = 'We got no troubles';
     expect(
-      <FormLayoutSidebar advantages={[matchingAdvantage, 'Down here all the fish is happy', 'Life is the bubbles']} />
-    ).toContainReactElement(FormLayoutSidebar, {
+      <CustomElement
+        advantages={[
+          matchingAdvantage,
+          'Down here all the fish is happy',
+          'Life is the bubbles',
+        ]}
+      />
+    ).toContainReactElement(CustomElement, {
       advantages: expect.arrayContaining([matchingAdvantage]),
     });
   });
@@ -46,7 +60,7 @@ describe('toContainReactElement', () => {
       deepNestedObject: object;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    function Component({deepNestedObject}: Props) {
+    function Component({ deepNestedObject }: Props) {
       // doesn't really matter what this returns, we only want to test the top-level Component
       return <div />;
     }
@@ -55,18 +69,24 @@ describe('toContainReactElement', () => {
       protagonist: 'ariel',
       loveInterest: 'prince eric',
       villain: 'ursula',
-      filmInfo: {year: '1989', writtenBy: ['Ron Clements', 'John Musker'], budget: 4000000},
+      filmInfo: {
+        year: '1989',
+        writtenBy: ['Ron Clements', 'John Musker'],
+        budget: 4000000,
+      },
       songs: [
-        {name: 'kiss the girl', genre: 'pop', length: '2:43'},
-        {name: 'under the sea', genre: 'calypso', length: '3:16'},
+        { name: 'kiss the girl', genre: 'pop', length: '2:43' },
+        { name: 'under the sea', genre: 'calypso', length: '3:16' },
       ],
     };
 
-    expect(<Component deepNestedObject={deepNestedObject} />).toContainReactElement(Component, {deepNestedObject});
+    expect(
+      <Component deepNestedObject={deepNestedObject} />
+    ).toContainReactElement(Component, { deepNestedObject });
   });
 
   it('is able to find deeply nested React elements in a render', () => {
-    const handleSelectClick = jest.fn();
+    const handleClick = jest.fn();
     function Component() {
       return (
         <div>
@@ -77,39 +97,37 @@ describe('toContainReactElement', () => {
                 <button type="button">Hello world</button>
               </div>
             </div>
-            <BaseModal>
-              <ProductCard handleSelectClick={handleSelectClick} index={0} product={{} as Product} isProductLoading />
-            </BaseModal>
+
+            <CustomElement handleClick={handleClick} index={0} isLoading />
           </div>
         </div>
       );
     }
-    const {result} = shallow(<Component />);
+    const { result } = shallow(<Component />);
 
-    expect(result).toContainReactElement('button', {type: 'button', children: 'Hello world'});
-    expect(result).toContainReactElement(ProductCard, {
-      handleSelectClick,
-      index: 0,
-      product: {},
-      isProductLoading: true,
+    expect(result).toContainReactElement('button', {
+      type: 'button',
+      children: 'Hello world',
     });
-    expect(result).toContainReactElement(BaseModal);
+    expect(result).toContainReactElement(CustomElement, {
+      handleClick,
+      index: 0,
+      isLoading: true,
+    });
   });
 
   it('can match when arrays in props have different references (not ===)', () => {
-    const locales = [Locale.nl, Locale.uk, Locale.test];
+    const films = ['Mulan', 'Lion King', 'Beauty and the Beast'];
 
     function Component() {
       return (
-        // Spread locales so they do not have the same reference
-        <RenderOnLocales locales={[...locales]}>
-          <p>Hello Lago</p>
-        </RenderOnLocales>
+        // Spread so they do not have the same reference
+        <CustomElement films={[...films]} />
       );
     }
-    const {result} = shallow(<Component />);
+    const { result } = shallow(<Component />);
 
-    expect(result).toContainReactElement(RenderOnLocales, {locales});
+    expect(result).toContainReactElement(CustomElement, { films });
   });
 
   it('can handle when there is an inline undefined in a tree', () => {
@@ -121,7 +139,10 @@ describe('toContainReactElement', () => {
         </div>
       );
     }
-    const {result} = shallow(<Component />);
-    expect(result).toContainReactElement('button', {type: 'button', children: 'Find me'});
+    const { result } = shallow(<Component />);
+    expect(result).toContainReactElement('button', {
+      type: 'button',
+      children: 'Find me',
+    });
   });
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import {shallow} from '..';
+import shallow from '../shallow';
 import BaseModal from '../../components/BaseModal/BaseModal';
 import FormLayoutSidebar from '../../components/Layout/FormLayout/Sidebar/Sidebar';
 import ProductCard from '../../components/ProductCard/ProductCard';
